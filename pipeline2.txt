@@ -1,0 +1,12 @@
+PUT _ingest/pipeline/search-hjm@ml-inference
+{
+  "version": 1,
+  "description": "Machine Learning Inference pipeline for the 'search-hjm' index",
+  "processors": [
+    {
+      "pipeline": {
+        "name": "ml-inference-search-hjm-_multilingual-e5-small_linux-x86_64"
+      }
+    }
+  ]
+}

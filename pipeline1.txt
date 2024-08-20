@@ -1,0 +1,52 @@
+PUT _ingest/pipeline/ml-inference-search-hjm-_multilingual-e5-small_linux-x86_64
+{
+  "version": 1,
+  "processors": [
+    {
+      "remove": {
+        "field": "ml.inference.body_content",
+        "ignore_missing": true
+      }
+    },
+    {
+      "inference": {
+        "field_map": {
+          "body_content": "text_field"
+        },
+        "model_id": ".multilingual-e5-small_linux-x86_64",
+        "target_field": "ml.inference.body_content",
+        "on_failure": [
+          {
+            "append": {
+              "field": "_source._ingest.inference_errors",
+              "allow_duplicates": false,
+              "value": [
+                {
+                  "message": "Processor 'inference' in pipeline 'ml.inference.search-hjm-_multilingual-e5-small_linux-x86_64' failed for field 'body_content' with message '{{ _ingest.on_failure_message }}'",
+                  "pipeline": "ml.inference.search-hjm-_multilingual-e5-small_linux-x86_64",
+                  "timestamp": "{{{ _ingest.timestamp }}}"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "append": {
+        "field": "_source._ingest.processors",
+        "value": [
+          {
+            "model_version": "12.0.0",
+            "pipeline": "ml.inference.search-hjm-_multilingual-e5-small_linux-x86_64",
+            "processed_timestamp": "{{{ _ingest.timestamp }}}",
+            "types": [
+              "pytorch",
+              "text_embedding"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
